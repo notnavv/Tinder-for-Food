@@ -1,0 +1,100 @@
+{
+  "is_mock": true,
+  "swipe_count": 24,
+  "dimensions": [
+    {
+      "key": "cuisine",
+      "label": "Cuisines",
+      "scores": [
+        {
+          "value": "indian",
+          "score": 0.8,
+          "n": 5
+        },
+        {
+          "value": "thai",
+          "score": 0.5,
+          "n": 3
+        },
+        {
+          "value": "mediterranean",
+          "score": 0.33,
+          "n": 3
+        },
+        {
+          "value": "american",
+          "score": -0.4,
+          "n": 5
+        },
+        {
+          "value": "mexican",
+          "score": -0.5,
+          "n": 2
+        }
+      ]
+    },
+    {
+      "key": "protein_category",
+      "label": "Proteins",
+      "scores": [
+        {
+          "value": "chicken",
+          "score": 0.6,
+          "n": 5
+        },
+        {
+          "value": "legumes",
+          "score": 0.5,
+          "n": 2
+        },
+        {
+          "value": "tofu",
+          "score": 0.33,
+          "n": 3
+        },
+        {
+          "value": "beef",
+          "score": -0.6,
+          "n": 5
+        }
+      ]
+    },
+    {
+      "key": "dietary_tags",
+      "label": "Dietary",
+      "scores": [
+        {
+          "value": "vegan",
+          "score": 0.4,
+          "n": 5
+        },
+        {
+          "value": "halal",
+          "score": 0.5,
+          "n": 4
+        },
+        {
+          "value": "vegetarian",
+          "score": 0.0,
+          "n": 4
+        }
+      ]
+    },
+    {
+      "key": "carbon_footprint",
+      "label": "Carbon footprint",
+      "scores": [
+        {
+          "value": "low",
+          "score": 0.3,
+          "n": 20
+        },
+        {
+          "value": "high",
+          "score": -0.5,
+          "n": 4
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,247 @@
+{
+  "is_mock": true,
+  "model": "content",
+  "service_date": "2026-10-16",
+  "meal_period": "lunch",
+  "dining_hall": null,
+  "items": [
+    {
+      "food": {
+        "id": "00000000-0000-4000-8000-000000000001",
+        "name": "Mock Chicken Tikka Masala",
+        "source_type": "recipe",
+        "source_id": "90001",
+        "ingredients_text": null,
+        "allergens": [
+          "dairy"
+        ],
+        "dietary_tags": [
+          "halal"
+        ],
+        "carbon_footprint": "low",
+        "cuisine": "indian",
+        "protein_category": "chicken",
+        "image_url": null
+      },
+      "score": 0.95,
+      "appearances": [
+        {
+          "dining_hall_slug": "de-neve",
+          "dining_hall_name": "De Neve Dining",
+          "service_date": "2026-10-16",
+          "meal_period": "lunch",
+          "station": "Hearth"
+        }
+      ],
+      "explanation": "You liked other Indian dishes (mock explanation)"
+    },
+    {
+      "food": {
+        "id": "00000000-0000-4000-8000-000000000009",
+        "name": "Mock Chana Masala",
+        "source_type": "recipe",
+        "source_id": "90009",
+        "ingredients_text": null,
+        "allergens": [],
+        "dietary_tags": [
+          "vegan",
+          "halal"
+        ],
+        "carbon_footprint": "low",
+        "cuisine": "indian",
+        "protein_category": "legumes",
+        "image_url": null
+      },
+      "score": 0.88,
+      "appearances": [
+        {
+          "dining_hall_slug": "de-neve",
+          "dining_hall_name": "De Neve Dining",
+          "service_date": "2026-10-16",
+          "meal_period": "lunch",
+          "station": "Hearth"
+        }
+      ],
+      "explanation": "You liked other Indian dishes (mock explanation)"
+    },
+    {
+      "food": {
+        "id": "00000000-0000-4000-8000-000000000002",
+        "name": "Mock Tofu Pad Thai",
+        "source_type": "recipe",
+        "source_id": "90002",
+        "ingredients_text": null,
+        "allergens": [
+          "soy",
+          "peanut",
+          "wheat",
+          "gluten"
+        ],
+        "dietary_tags": [
+          "vegan"
+        ],
+        "carbon_footprint": "low",
+        "cuisine": "thai",
+        "protein_category": "tofu",
+        "image_url": null
+      },
+      "score": 0.81,
+      "appearances": [
+        {
+          "dining_hall_slug": "epicuria-covel",
+          "dining_hall_name": "Epicuria at Covel",
+          "service_date": "2026-10-16",
+          "meal_period": "lunch",
+          "station": "Wok"
+        }
+      ],
+      "explanation": "You liked other Thai dishes (mock explanation)"
+    },
+    {
+      "food": {
+        "id": "00000000-0000-4000-8000-000000000007",
+        "name": "Mock Lemon Herb Chicken",
+        "source_type": "recipe",
+        "source_id": "90007",
+        "ingredients_text": null,
+        "allergens": [],
+        "dietary_tags": [
+          "halal"
+        ],
+        "carbon_footprint": "low",
+        "cuisine": "mediterranean",
+        "protein_category": "chicken",
+        "image_url": null
+      },
+      "score": 0.74,
+      "appearances": [
+        {
+          "dining_hall_slug": "feast-rieber",
+          "dining_hall_name": "Feast at Rieber",
+          "service_date": "2026-10-16",
+          "meal_period": "lunch",
+          "station": "Simply Grilled"
+        }
+      ],
+      "explanation": "You liked other Mediterranean dishes (mock explanation)"
+    },
+    {
+      "food": {
+        "id": "00000000-0000-4000-8000-000000000005",
+        "name": "Mock Salmon Poke Bowl",
+        "source_type": "recipe",
+        "source_id": "90005",
+        "ingredients_text": null,
+        "allergens": [
+          "fish",
+          "soy",
+          "sesame"
+        ],
+        "dietary_tags": [],
+        "carbon_footprint": "low",
+        "cuisine": "japanese",
+        "protein_category": "fish",
+        "image_url": null
+      },
+      "score": 0.67,
+      "appearances": [
+        {
+          "dining_hall_slug": "de-neve",
+          "dining_hall_name": "De Neve Dining",
+          "service_date": "2026-10-16",
+          "meal_period": "lunch",
+          "station": "Freshly Bowled"
+        }
+      ],
+      "explanation": "You liked other Japanese dishes (mock explanation)"
+    },
+    {
+      "food": {
+        "id": "00000000-0000-4000-8000-000000000012",
+        "name": "Mock Greek Salad",
+        "source_type": "recipe",
+        "source_id": "90012",
+        "ingredients_text": null,
+        "allergens": [
+          "dairy"
+        ],
+        "dietary_tags": [
+          "vegetarian"
+        ],
+        "carbon_footprint": "low",
+        "cuisine": "mediterranean",
+        "protein_category": "none",
+        "image_url": null
+      },
+      "score": 0.6,
+      "appearances": [
+        {
+          "dining_hall_slug": "bruin-plate",
+          "dining_hall_name": "Bruin Plate",
+          "service_date": "2026-10-16",
+          "meal_period": "lunch",
+          "station": "Harvest"
+        }
+      ],
+      "explanation": "You liked other Mediterranean dishes (mock explanation)"
+    },
+    {
+      "food": {
+        "id": "00000000-0000-4000-8000-000000000004",
+        "name": "Mock Margherita Pizza",
+        "source_type": "recipe",
+        "source_id": "90004",
+        "ingredients_text": null,
+        "allergens": [
+          "dairy",
+          "wheat",
+          "gluten"
+        ],
+        "dietary_tags": [
+          "vegetarian"
+        ],
+        "carbon_footprint": "low",
+        "cuisine": "italian",
+        "protein_category": "none",
+        "image_url": null
+      },
+      "score": 0.53,
+      "appearances": [
+        {
+          "dining_hall_slug": "bruin-plate",
+          "dining_hall_name": "Bruin Plate",
+          "service_date": "2026-10-16",
+          "meal_period": "lunch",
+          "station": "Stone Fired"
+        }
+      ],
+      "explanation": "You liked other Italian dishes (mock explanation)"
+    },
+    {
+      "food": {
+        "id": "00000000-0000-4000-8000-000000000003",
+        "name": "Mock Carne Asada Tacos",
+        "source_type": "recipe",
+        "source_id": "90003",
+        "ingredients_text": null,
+        "allergens": [],
+        "dietary_tags": [],
+        "carbon_footprint": "high",
+        "cuisine": "mexican",
+        "protein_category": "beef",
+        "image_url": null
+      },
+      "score": 0.46,
+      "appearances": [
+        {
+          "dining_hall_slug": "feast-rieber",
+          "dining_hall_name": "Feast at Rieber",
+          "service_date": "2026-10-16",
+          "meal_period": "lunch",
+          "station": "Cantina"
+        }
+      ],
+      "explanation": "You liked other Mexican dishes (mock explanation)"
+    }
+  ]
+}

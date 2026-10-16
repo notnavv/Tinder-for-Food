@@ -1,0 +1,20 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens. Replace the placeholder values with the
+ * Figma palette and type scale; every component should use these tokens
+ * (e.g. bg-brand, text-ink) instead of hard-coded colors.
+ */
+@theme {
+  --color-brand: #ff5a5f;
+  --color-brand-dark: #d9434a;
+  --color-like: #22c55e;
+  --color-nope: #ef4444;
+  --color-ink: #1f2937;
+  --color-surface: #fffaf5;
+  --font-display: ui-rounded, system-ui, sans-serif;
+}
+
+body {
+  @apply bg-surface text-ink antialiased;
+}
