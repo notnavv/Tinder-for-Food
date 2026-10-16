@@ -1,0 +1,40 @@
+# ---- Secrets: never commit these ----
+.env
+.env.*
+!.env.example
+
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# ---- Frontend (Node) ----
+node_modules/
+frontend/dist/
+*.log
+npm-debug.log*
+
+# ---- Backend (Python) ----
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# ---- Notebooks ----
+.ipynb_checkpoints/
+
+# ---- Data ----
+# Raw scraped HTML and team photos stay local / in Supabase Storage.
+# Small curated seed files in data/seed/ ARE committed.
+data/raw/*
+!data/raw/.gitkeep
+data/photos/
+
+# ---- Supabase CLI local state ----
+supabase/.temp/
+supabase/.branches/

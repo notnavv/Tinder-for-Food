@@ -1,0 +1,15 @@
+# Runtime: API
+fastapi==0.142.2
+starlette==1.7.0  # pinned explicitly: fastapi allows older versions with known CVEs
+uvicorn[standard]==0.54.0
+pydantic-settings==2.15.0
+supabase==2.31.0
+
+# Runtime: ML
+pandas==3.0.6
+numpy==2.5.3
+scikit-learn==1.9.1
+
+# Ingestion
+requests==2.34.2
+beautifulsoup4==4.15.0
