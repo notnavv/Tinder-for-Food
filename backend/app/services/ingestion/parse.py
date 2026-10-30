@@ -17,10 +17,6 @@ def extract_source_key(href):
     else:
         return (None, None)
 
-# Checkpoint: should return ('recipe', '881') and ('ingredient', '8618')
-print(extract_source_key('/menu-item/?recipe=881'))
-print(extract_source_key('/menu-item/?ingredient=8618'))
-
 def extract_foods(soup):
     unique = {}
     for link in soup.select('a[href*="recipe="], a[href*="ingredient="]'):
@@ -31,10 +27,6 @@ def extract_foods(soup):
           unique[(source_type, source_id)] = {"source_type": source_type, "source_id": source_id, "name": name}
 
     return list(unique.values())
-
-foods = extract_foods(soup)
-print("Unique foods:", len(foods))
-print(foods[:2])
 
 def extract_appearances(soup, service_date):
     appearances = []
