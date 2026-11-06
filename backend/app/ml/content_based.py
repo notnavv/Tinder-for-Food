@@ -74,6 +74,15 @@ class ContentBasedRecommender:
 
     def fit(self, foods: pd.DataFrame, swipes: pd.DataFrame) -> "ContentBasedRecommender":
         # STEP 3 ---------------------------------------------------------------
+        food_ids = []
+        for i, x in enumerate(foods["id"]):
+            food_ids.append[(i,x)]
+        
+        
+
+
+
+
         # GOAL: turn every dish into a row of numbers. Create these attributes
         #       (later steps and the tests use these exact names), then `return self`.
         #   self.food_ids    list of dish ids, in table order   e.g. ["recipe:1", "recipe:2", ...]
