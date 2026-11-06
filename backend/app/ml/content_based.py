@@ -30,7 +30,7 @@ def dish_text(food) -> str:
     #       all separated by single spaces.
     #       `food` is one row of the dishes table. food["name"] is a string,
     #       food["stations"] is a LIST of strings.
-    string = food["name"]+ str.join(food["stations"])
+    string = food["name"]+ " " + " ".join(food["stations"])
     return string
     # EXAMPLE: name "Mock Grilled Chicken Breast", stations ["Grill"]
     #          -> "Mock Grilled Chicken Breast Grill"
