@@ -49,6 +49,15 @@ def dish_tags(food) -> list[str]:
     #       2) "allergen:<tag>" for every item in food["allergens"]
     #       3) "carbon:<value>" for food["carbon_footprint"], but ONLY if it
     #          isn't an empty string
+    tags = []
+    for x in food["dietary_tags"]:
+        tags.append(f"diet:{x}")
+    for x in food["allergens"]:
+        tags.append(f"allergen:{x}")
+    if food["carbon_footprint"] != "":
+        tags.append(f"carbon:{food["carbon_footprint"]}")
+
+    return tags
     # EXAMPLE: dietary_tags ["halal"], allergens [], carbon_footprint "low"
     #          -> ["diet:halal", "carbon:low"]
     #          dietary_tags [], allergens ["soy"], carbon_footprint ""
