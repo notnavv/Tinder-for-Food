@@ -25,8 +25,6 @@ def test_fetcher_requires_explicit_network_flag(monkeypatch):
     get_settings.cache_clear()
 
 
-# Remove the xfail marker once parse_hall_page is implemented.
-@pytest.mark.xfail(raises=NotImplementedError, reason="TODO: implement parse_hall_page")
 def test_parse_hall_page_sample():
     items = parse_hall_page(FIXTURE.read_text(), "bruin-plate", date(2026, 10, 15))
     assert [(i.meal_period.lower(), i.station, i.source_type, i.source_id) for i in items] == [
