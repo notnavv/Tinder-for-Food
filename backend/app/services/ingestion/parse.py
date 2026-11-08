@@ -47,7 +47,38 @@ def parse_hall_page(html: str, hall_slug: str, service_date: date) -> list[Parse
     """One ParsedMenuItem for every real dish card on a hall's menu page."""
     # GOAL: return a LIST of ParsedMenuItem objects, one per dish card, in the
     #       order they appear on the page. Each one must know its meal and station.
-    #
+    soup = BeautifulSoup(html, "html.parser")
+    results = []
+    for station_div in soup.select("div.meal-station"):
+        meal = station_div.get("id", "").split("-")[0]
+        heading = station_div.select_one(".category-heading h2")
+        station = heading.get_text(strip=True) if heading else ""
+
+        for card in station_div.select("section.recipe-card"):
+            name_tag = card.select_one(".menu-item-title h3")
+            link = card.select_one("a.recipe-detail-link")
+            
+            if name_tag is None or link is None:
+                continue
+
+            name = name_tag.get_text(strip=True)
+            href = link.get("href", "")
+            source_type, source_id = extract_source_key(href)
+
+            if not name or not source_id:
+                continue
+
+            icon_titles = []
+            for img in card.select("img.menu-meal-station__allergen-icon[title]"):
+                icon_titles.append(img["title"])
+
+            results.append(ParsedMenuItem(hall_slug=hall_slug, service_date=service_date, meal_period=meal, station=station, name=name, source_type=source_type, source_id=source_id, icon_titles=icon_titles, detail_url=urljoin(BASE_URL, href),))
+    return results
+
+
+
+
+
     # EXAMPLE: the test page (tests/fixtures/hall_page_sample.html) has 2 stations
     #          and 3 cards, one of them empty. You should return 2 items:
     #            meal "breakfast", station "Freshly Bowled", ("recipe", "881"),
