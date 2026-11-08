@@ -161,15 +161,12 @@ class ContentBasedRecommender:
     def score(self, user_history: pd.DataFrame, candidate_food_ids: list[str]) -> pd.Series:
         profile = self.build_profile(user_history)
 
-        # Without likes, recommend using overall popularity.
         if profile is None:
             return self.popularity.loc[candidate_food_ids]
 
         candidate_rows = [self.row[food_id] for food_id in candidate_food_ids]
 
-        scores = cosine_similarity(
-            profile, self.X[candidate_rows]
-        ).ravel()
+        scores = cosine_similarity(profile, self.X[candidate_rows]).ravel()
 
         return pd.Series(scores, index=candidate_food_ids)
         # STEP 5 ---------------------------------------------------------------
