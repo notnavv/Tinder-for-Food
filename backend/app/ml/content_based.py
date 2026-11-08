@@ -30,7 +30,7 @@ def dish_text(food) -> str:
     #       all separated by single spaces.
     #       `food` is one row of the dishes table. food["name"] is a string,
     #       food["stations"] is a LIST of strings.
-    string = food["name"]+ " " + " ".join(food["stations"])
+    string = food["name"] + " " + " ".join(food["stations"])
     return string
     # EXAMPLE: name "Mock Grilled Chicken Breast", stations ["Grill"]
     #          -> "Mock Grilled Chicken Breast Grill"
@@ -54,7 +54,7 @@ def dish_tags(food) -> list[str]:
     for x in food["allergens"]:
         tags.append(f"allergen:{x}")
     if food["carbon_footprint"] != "":
-        tags.append(f'carbon:{food["carbon_footprint"]}')
+        tags.append(f"carbon:{food['carbon_footprint']}")
 
     return tags
     # EXAMPLE: dietary_tags ["halal"], allergens [], carbon_footprint "low"
@@ -95,7 +95,6 @@ class ContentBasedRecommender:
         self.popularity = popularity.reindex(self.food_ids).fillna(0.5)
 
         return self
-
 
         # GOAL: turn every dish into a row of numbers. Create these attributes
         #       (later steps and the tests use these exact names), then `return self`.
