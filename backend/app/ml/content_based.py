@@ -55,7 +55,7 @@ def dish_tags(food) -> list[str]:
     for x in food["allergens"]:
         tags.append(f"allergen:{x}")
     if food["carbon_footprint"] != "":
-        tags.append(f"carbon:{food["carbon_footprint"]}")
+        tags.append(f'carbon:{food["carbon_footprint"]}')
 
     return tags
     # EXAMPLE: dietary_tags ["halal"], allergens [], carbon_footprint "low"
@@ -74,13 +74,29 @@ class ContentBasedRecommender:
 
     def fit(self, foods: pd.DataFrame, swipes: pd.DataFrame) -> "ContentBasedRecommender":
         # STEP 3 ---------------------------------------------------------------
-        food_ids = []
-        for i, x in enumerate(foods["id"]):
-            food_ids.append[(i,x)]
-        
-        
+        self.food_ids = foods["id"].tolist()
+        self.row = {}
 
+        for i, food_id in enumerate(self.food_ids):
+            self.row[food_id] = i
 
+        texts = foods.apply(dish_text, axis=1)
+        tag_lists = foods.apply(dish_tags, axis=1)
+
+        self.tfidf = TfidfVectorizer(stop_words="english")
+        words = self.tfidf.fit_transform(texts)
+
+        self.mlb = MultiLabelBinarizer()
+        tags = self.mlb.fit_transform(tag_lists)
+        tags = csr_matrix(tags.astype(float))
+
+        self.X = hstack([words, tags * TAG_WEIGHT]).tocsr()
+
+        counts = swipes.groupby("food_id")["liked"].agg(["sum", "count"])
+        popularity = (counts["sum"] + 1) / (counts["count"] + 2)
+        self.popularity = popularity.reindex(self.food_ids).fillna(0.5)
+
+        return self
 
 
         # GOAL: turn every dish into a row of numbers. Create these attributes
@@ -107,6 +123,23 @@ class ContentBasedRecommender:
         raise NotImplementedError("Step 3")
 
     def build_profile(self, user_history: pd.DataFrame):
+        liked_ids = user_history.loc[user_history["liked"], "food_id"]
+        disliked_ids = user_history.loc[~user_history["liked"], "food_id"]
+
+        liked_rows = [self.row[food_id] for food_id in liked_ids]
+        disliked_rows = [self.row[food_id] for food_id in disliked_ids]
+
+        if len(liked_rows) == 0:
+            return None
+
+        # Start with the average liked dish.
+        profile = np.asarray(self.X[liked_rows].mean(axis=0))
+
+        # Subtract the average disliked dish, if any.
+        if len(disliked_rows) > 0:
+            profile -= np.asarray(self.X[disliked_rows].mean(axis=0))
+
+        return profile
         """Average of liked dish vectors minus average of disliked ones. None if no likes."""
         # STEP 4 ---------------------------------------------------------------
         # GOAL: return ONE row of numbers that describes this student's taste:
@@ -126,6 +159,19 @@ class ContentBasedRecommender:
         raise NotImplementedError("Step 4")
 
     def score(self, user_history: pd.DataFrame, candidate_food_ids: list[str]) -> pd.Series:
+        profile = self.build_profile(user_history)
+
+        # Without likes, recommend using overall popularity.
+        if profile is None:
+            return self.popularity.loc[candidate_food_ids]
+
+        candidate_rows = [self.row[food_id] for food_id in candidate_food_ids]
+
+        scores = cosine_similarity(
+            profile, self.X[candidate_rows]
+        ).ravel()
+
+        return pd.Series(scores, index=candidate_food_ids)
         # STEP 5 ---------------------------------------------------------------
         # GOAL: return a pandas Series with one score per candidate dish,
         #       indexed by the dish ids.
