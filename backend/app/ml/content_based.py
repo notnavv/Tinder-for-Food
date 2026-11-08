@@ -38,7 +38,6 @@ def dish_text(food) -> str:
     # HINT 2: how could you turn the list ["Grill", "Wok"] into "Grill Wok"?
     #         (look up Python's str.join)
     # CHECK: pytest tests/test_content_based.py -k dish_text   -> 1 passed
-    raise NotImplementedError("Step 1")
 
 
 def dish_tags(food) -> list[str]:
@@ -66,7 +65,6 @@ def dish_tags(food) -> list[str]:
     # HINT 2: start with an empty list and add to it, or use a list comprehension.
     # HINT 3: an empty string "" counts as False in an if-statement.
     # CHECK: pytest tests/test_content_based.py -k dish_tags   -> 1 passed
-    raise NotImplementedError("Step 2")
 
 
 class ContentBasedRecommender:
@@ -120,7 +118,6 @@ class ContentBasedRecommender:
         #         likes and swipe counts per dish. Then .reindex(self.food_ids)
         #         .fillna(0.5) gives every dish a value, even never-swiped ones.
         # CHECK: pytest tests/test_content_based.py -q   -> 3 passed
-        raise NotImplementedError("Step 3")
 
     def build_profile(self, user_history: pd.DataFrame):
         liked_ids = user_history.loc[user_history["liked"], "food_id"]
@@ -156,7 +153,6 @@ class ContentBasedRecommender:
         #         column. Wrap it in np.asarray(...) so you can subtract.
         # HINT 4: only subtract if there were any dislikes.
         # CHECK: pytest tests/test_content_based.py -q   -> 5 passed
-        raise NotImplementedError("Step 4")
 
     def score(self, user_history: pd.DataFrame, candidate_food_ids: list[str]) -> pd.Series:
         profile = self.build_profile(user_history)
@@ -184,4 +180,3 @@ class ContentBasedRecommender:
         #         .ravel() flattens it into N numbers.
         # HINT 4: pd.Series(numbers, index=candidate_food_ids)
         # CHECK: pytest tests/test_content_based.py -q   -> 7 passed!
-        raise NotImplementedError("Step 5")
