@@ -46,6 +46,11 @@ def verify_supabase_token(token: str, settings: Settings) -> str:
     #   2. If that raises an error (a bad token does), turn it into a 401.
     #   3. If the answer has no user in it, also a 401. Otherwise return the user's id.
     #
+    try:
+        response = get_supabase().auth.get_user(token)
+        return response.user.id
+    except Exception as exc: 
+        raise HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid or expired sign-in token") 
     # HINT 1: try: ... except Exception as exc: raise HTTPException(...) from exc
     # HINT 2: a 401 looks like:
     #         HTTPException(status.HTTP_401_UNAUTHORIZED, "Invalid or expired sign-in token")
@@ -60,7 +65,6 @@ def verify_supabase_token(token: str, settings: Settings) -> str:
     #
     # CHECK: pytest tests/test_auth_token.py -q   -> 5 passed
     #        pytest                              -> everything passes
-    raise NotImplementedError("Supabase JWT verification is not implemented yet (see app/core/auth.py)")
 
 
 def get_current_user_id(
