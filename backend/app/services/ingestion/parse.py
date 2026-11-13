@@ -12,13 +12,41 @@ Known quirks: some cards are empty (no name, no link). Skip them and add a warni
 """
 
 from datetime import date
+from bs4 import BeautifulSoup, NavigableString
 
 from app.services.ingestion.models import ParsedMenuItem, RecipeDetail
 
 
 def parse_hall_page(html: str, hall_slug: str, service_date: date) -> list[ParsedMenuItem]:
-    raise NotImplementedError("TODO: see tests/test_ingestion.py for the expected output")
+    soup = BeautifulSoup(html, "html.parser")         
+    items = []
 
+    for box in soup.select("div.meal-station"):        
+        meal = box.get("id", "").split("-")[0]        
+
+        heading = box.select_one(".category-heading h2")   
+        station = heading.get_text(strip=True) if heading else ""
+
+        for card in box.select("section.recipe-card"):     
+            h3 = card.find("h3")
+            link = card.find("a", href=True)
+            if h3 is None or link is None:                 
+                continue
+            source_key = extract_source_key(link["href"])
+            if source_key is None:
+                continue
+
+            items.append(ParsedMenuItem(                
+                hall_slug=hall_slug,
+                service_date=service_date,
+                meal=meal,
+                station=station,
+                name=h3.get_text(strip=True),
+                source_key=source_key,
+                detail_url=urljoin("https://dining.ucla.edu", link["href"]),
+            ))
+
+    return items
 
 def parse_detail_page(html: str, source_type: str, source_id: str) -> RecipeDetail:
     raise NotImplementedError("TODO")
