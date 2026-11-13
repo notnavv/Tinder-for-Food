@@ -1,40 +1,19 @@
-import { useEffect, useState } from 'react'
-import { getHealth } from '../lib/api'
-import { supabase, USE_MOCKS } from '../lib/supabase'
-import type { HealthResponse } from '../types/contracts'
+import { Link } from 'react-router-dom'
+import { FoodImage, PaperPanel, SecondaryButton, SectionLabel } from '../components/ui'
+import { useAppState } from '../lib/useAppState'
 
-/** Developer status page: confirms the frontend, backend and env are wired up. */
 export default function HomePage() {
-  const [health, setHealth] = useState<HealthResponse | null>(null)
-  const [healthError, setHealthError] = useState<string | null>(null)
-
-  useEffect(() => {
-    getHealth()
-      .then(setHealth)
-      .catch((err: unknown) => setHealthError(String(err)))
-  }, [])
-
+  const { foods } = useAppState()
+  const pick = foods[0]
   return (
-    <section className="mx-auto max-w-md p-6">
-      <h1 className="font-display text-3xl font-bold text-brand">Tinder for Food</h1>
-      <p className="mt-2 text-sm">Dev status. This page will become the landing page.</p>
-      <dl className="mt-6 space-y-2 rounded-xl bg-white p-4 text-sm shadow">
-        <Row label="Mock mode" value={USE_MOCKS ? 'on (data/mock)' : 'off'} />
-        <Row label="Supabase client" value={supabase ? 'configured' : 'not configured'} />
-        <Row
-          label="FastAPI /health"
-          value={health ? `ok (v${health.version}, mocks ${health.use_mock_data ? 'on' : 'off'})` : healthError ? 'unreachable' : '…'}
-        />
-      </dl>
+    <section className="welcome-page page-wrap">
+      <SectionLabel>UCLA dining swipe</SectionLabel>
+      <h1>Good food.<br />Good company.</h1>
+      <p className="welcome-copy">Discover what you want to eat, one swipe at a time.</p>
+      {pick && <PaperPanel className="today-card"><span className="strip-label">Today’s pick</span><FoodImage food={pick} /><h2>Find your next favorite</h2><p>Swipe to discover a dish you love</p></PaperPanel>}
+      <Link className="primary-button button-link full-width" to="/onboarding">Get started</Link>
+      <Link className="signin-prompt" to="/login">Already have an account? <span>Sign in</span></Link>
+      <SecondaryButton className="full-width welcome-demo" onClick={() => window.location.assign('/onboarding')}>Explore demo</SecondaryButton>
     </section>
-  )
-}
-
-function Row({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex justify-between gap-4">
-      <dt className="text-gray-500">{label}</dt>
-      <dd className="font-medium">{value}</dd>
-    </div>
   )
 }

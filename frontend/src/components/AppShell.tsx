@@ -34,8 +34,6 @@ export default function AppShell({ children }: { children: ReactNode }) {
             {isDemo && <span className="demo-pill">Demo mode</span>}
             <NavLink to="/profile" className="avatar-link" aria-label="Open profile">{displayName.slice(0, 1).toUpperCase()}</NavLink>
           </div>
-        </header>
-        <main className="app-main">{children}</main>
         <nav className="bottom-nav" aria-label="Main navigation">
           {NAV.map((item) => (
             <NavLink key={item.to} to={item.to} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}>
@@ -44,6 +42,8 @@ export default function AppShell({ children }: { children: ReactNode }) {
             </NavLink>
           ))}
         </nav>
+        </header>
+        <main className="app-main">{children}</main>
       </div>
     </div>
   )
