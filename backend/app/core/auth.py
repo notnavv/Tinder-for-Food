@@ -1,4 +1,4 @@
-    """Figuring out which user is calling the API.
+"""Figuring out which user is calling the API.
 
 The frontend sends the user's Supabase access token as
 `Authorization: Bearer <token>`. The backend must verify that token before
