@@ -19,7 +19,6 @@ import type {
   ModelName,
   RecommendationsResponse,
 } from '../types/contracts'
-import { getDeckFromSupabase } from './deckFallback'
 import { supabase, USE_MOCKS } from './supabase'
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
@@ -52,12 +51,7 @@ export function getHealth(): Promise<HealthResponse> {
 
 export async function getDeck(limit = 10): Promise<DeckResponse> {
   if (USE_MOCKS) return mockDeck as DeckResponse
-  try {
-    return await apiGet<DeckResponse>('/deck', { limit })
-  } catch (err) {
-    console.warn('[getDeck] ML service unavailable, using Supabase fallback', err)
-    return getDeckFromSupabase(limit)
-  }
+  return apiGet<DeckResponse>('/deck', { limit })
 }
 
 export interface RecommendationQuery {

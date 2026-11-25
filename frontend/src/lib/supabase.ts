@@ -10,4 +10,12 @@ const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
  */
 export const supabase: SupabaseClient | null = url && anonKey ? createClient(url, anonKey) : null
 
-export const USE_MOCKS = import.meta.env.VITE_USE_MOCKS === 'true' || !supabase
+function demoOverride() {
+  try { return sessionStorage.getItem('tff-demo') === 'true' } catch { return false }
+}
+export const USE_MOCKS = demoOverride() || import.meta.env.VITE_USE_MOCKS === 'true' || !supabase
+
+export function enterDemo() {
+  sessionStorage.setItem('tff-demo', 'true')
+  window.location.assign('/onboarding')
+}
