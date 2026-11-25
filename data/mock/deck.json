@@ -17,7 +17,10 @@
       "carbon_footprint": "low",
       "cuisine": "indian",
       "protein_category": "chicken",
-      "image_url": null
+      "image_url": null,
+      "dining_hall_names": [
+        "De Neve Dining"
+      ]
     },
     {
       "id": "00000000-0000-4000-8000-000000000002",
@@ -37,7 +40,10 @@
       "carbon_footprint": "low",
       "cuisine": "thai",
       "protein_category": "tofu",
-      "image_url": null
+      "image_url": null,
+      "dining_hall_names": [
+        "Epicuria at Covel"
+      ]
     },
     {
       "id": "00000000-0000-4000-8000-000000000003",
@@ -50,7 +56,10 @@
       "carbon_footprint": "high",
       "cuisine": "mexican",
       "protein_category": "beef",
-      "image_url": null
+      "image_url": null,
+      "dining_hall_names": [
+        "Feast at Rieber"
+      ]
     },
     {
       "id": "00000000-0000-4000-8000-000000000004",
@@ -69,7 +78,10 @@
       "carbon_footprint": "low",
       "cuisine": "italian",
       "protein_category": "none",
-      "image_url": null
+      "image_url": null,
+      "dining_hall_names": [
+        "Bruin Plate"
+      ]
     },
     {
       "id": "00000000-0000-4000-8000-000000000005",
@@ -86,7 +98,10 @@
       "carbon_footprint": "low",
       "cuisine": "japanese",
       "protein_category": "fish",
-      "image_url": null
+      "image_url": null,
+      "dining_hall_names": [
+        "De Neve Dining"
+      ]
     },
     {
       "id": "00000000-0000-4000-8000-000000000006",
@@ -120,7 +135,10 @@
       "carbon_footprint": "low",
       "cuisine": "mediterranean",
       "protein_category": "chicken",
-      "image_url": null
+      "image_url": null,
+      "dining_hall_names": [
+        "Feast at Rieber"
+      ]
     },
     {
       "id": "00000000-0000-4000-8000-000000000008",
@@ -151,7 +169,10 @@
       "carbon_footprint": "low",
       "cuisine": "indian",
       "protein_category": "legumes",
-      "image_url": null
+      "image_url": null,
+      "dining_hall_names": [
+        "De Neve Dining"
+      ]
     },
     {
       "id": "00000000-0000-4000-8000-000000000010",

@@ -36,10 +36,14 @@ class MenuAppearance(BaseModel):
     station: str | None = None
 
 
+class DeckFood(Food):
+    dining_hall_names: list[str] | None = None
+
+
 class DeckResponse(BaseModel):
     is_mock: bool
     strategy: str
-    items: list[Food]
+    items: list[DeckFood]
 
 
 class RecommendationItem(BaseModel):

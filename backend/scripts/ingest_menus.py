@@ -65,13 +65,19 @@ def main() -> int:
         print(f"{hall.name}: {len(items)} items")
 
     if args.write:
-        upsert_menu_items(all_items, report)
-        record_run(report, "success" if not report.errors else "partial")
+        if not all_items:
+            report.errors.append("No dishes found for this date; nothing written.")
+        else:
+            upsert_menu_items(all_items, report)
+            record_run(report, "partial" if report.pages_fetched < len(halls) else "success")
+            print(f"Created {report.foods_created} foods; upserted {report.appearances_upserted} appearances.")
     else:
         print("Dry run: nothing written. Pass --write to save to Supabase.")
 
     for w in report.warnings:
         print(f"WARNING: {w}", file=sys.stderr)
+    for error in report.errors:
+        print(f"ERROR: {error}", file=sys.stderr)
     return 1 if report.errors else 0
 
 
