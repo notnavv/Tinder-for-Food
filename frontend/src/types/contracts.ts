@@ -68,11 +68,15 @@ export interface NewSwipeEvent {
 
 // ---------- FastAPI responses ----------
 
+export interface DeckFood extends Food {
+  dining_hall_names?: string[]
+}
+
 export interface DeckResponse {
   is_mock: boolean
   /** e.g. "random_available", "supabase_fallback", "diverse_cold_start" */
   strategy: string
-  items: Food[]
+  items: DeckFood[]
 }
 
 export interface RecommendationItem {

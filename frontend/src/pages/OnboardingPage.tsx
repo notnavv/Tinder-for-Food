@@ -1,26 +1,55 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { PaperPanel, PageHeader, PrimaryButton, SecondaryButton } from '../components/ui'
-import { type TastePreference } from '../lib/appStateContext'
+import { TASTE_PREFERENCES, type TastePreference } from '../lib/appStateContext'
 import { useAppState } from '../lib/useAppState'
+import { parseAvoidances } from '../lib/preferences'
 
-const OPTIONS: TastePreference[] = ['vegetarian', 'vegan', 'high protein', 'halal', 'comfort food', 'quick bites']
+
+const ALLERGENS = [
+  ['dairy', 'Dairy', '🥛'],
+  ['eggs', 'Eggs', '🥚'],
+  ['fish', 'Fish', '🐟'],
+  ['crustacean_shellfish', 'Crustacean shellfish', '🦐'],
+  ['gluten', 'Gluten', '🍞'],
+  ['wheat', 'Wheat', '🌾'],
+  ['soy', 'Soy', '🫘'],
+  ['sesame', 'Sesame', '🫘'],
+  ['peanut', 'Peanuts', '🥜'],
+  ['tree_nuts', 'Tree nuts', '🌰'],
+  ['alcohol', 'Alcohol', '🍷'],
+] as const
 
 export default function OnboardingPage() {
   const navigate = useNavigate()
   const { preferences: savedPreferences, avoidances: savedAvoidances, savePreferences } = useAppState()
+  const [pending, setPending] = useState(false)
+  const [error, setError] = useState(false)
   const [step, setStep] = useState(1)
   const [preferences, setPreferences] = useState<TastePreference[]>(savedPreferences)
-  const [avoidances, setAvoidances] = useState(savedAvoidances)
+  const [avoidances, setAvoidances] = useState(() => parseAvoidances(savedAvoidances))
+
+  useEffect(() => {
+    setPreferences(savedPreferences)
+    setAvoidances(parseAvoidances(savedAvoidances))
+  }, [savedPreferences, savedAvoidances])
 
   function toggle(option: TastePreference) {
     setPreferences((current) => current.includes(option) ? current.filter((item) => item !== option) : [...current, option])
   }
 
-  function continueToDeck() {
-    savePreferences(preferences, avoidances)
-    if (step === 1) setStep(2)
-    else navigate('/swipe')
+  async function continueToDeck() {
+    if (step === 2) { navigate('/swipe'); return }
+    setPending(true)
+    setError(false)
+    try {
+      await savePreferences(preferences, avoidances.join(', '))
+      setStep(2)
+    } catch {
+      setError(true)
+    } finally {
+      setPending(false)
+    }
   }
 
   if (step === 2) {
@@ -46,13 +75,32 @@ export default function OnboardingPage() {
       <PageHeader eyebrow="Step 1 of 2" title="What sounds good?" description="Choose a few favorites. Change them later." />
       <PaperPanel className="preference-panel">
         <div className="preference-grid">
-          {OPTIONS.map((option) => <button key={option} className={`preference-chip${preferences.includes(option) ? ' selected' : ''}`} onClick={() => toggle(option)} aria-pressed={preferences.includes(option)}>{option}</button>)}
+          {TASTE_PREFERENCES.map((option) => <button key={option} className={`preference-chip${preferences.includes(option) ? ' selected' : ''}`} onClick={() => toggle(option)} aria-pressed={preferences.includes(option)}>{option}</button>)}
         </div>
-        <label htmlFor="avoidances" className="strip-label">Anything to avoid?</label>
-        <input id="avoidances" className="pill-input" placeholder="e.g. peanuts, dairy" value={avoidances} onChange={(event) => setAvoidances(event.target.value)} />
-        <p className="muted-copy">Use commas between avoidances. Filters use listed tags and allergens only; verify ingredients with dining staff. High protein, comfort food, and quick bites are saved as taste preferences for future recommendations.</p>
+        <fieldset className="allergen-options">
+          <legend className="strip-label">Allergens to filter out</legend>
+          <div className="preference-grid">
+            {ALLERGENS.map(([key, label, icon]) => {
+              const selected = avoidances.includes(key)
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  className={`preference-chip allergen-chip${selected ? ' selected' : ''}`}
+                  aria-pressed={selected}
+                  onClick={() => setAvoidances(current => selected ? current.filter(item => item !== key) : [...current, key])}
+                >
+                  <span aria-hidden="true">{icon}</span>
+                  {label}
+                </button>
+              )
+            })}
+          </div>
+          <p className="muted-copy">Filters use UCLA’s listed allergens. Check with dining staff about allergies.</p>
+        </fieldset>
       </PaperPanel>
-      <PrimaryButton className="full-width" onClick={continueToDeck}>Continue</PrimaryButton>
+      {error && <p className="form-error" role="alert">Could not save your preferences. Please try again.</p>}
+      <PrimaryButton className="full-width" disabled={pending} onClick={continueToDeck}>{pending ? 'Saving…' : 'Continue'}</PrimaryButton>
       <SecondaryButton className="full-width" onClick={() => navigate('/')}>I’ll do this later</SecondaryButton>
     </section>
   )

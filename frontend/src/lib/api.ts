@@ -1,11 +1,10 @@
 /**
  * Typed client for the FastAPI ML service. Shapes: src/types/contracts.ts.
  *
- * Every function works in three modes:
- *   1. Mock mode (VITE_USE_MOCKS=true): returns data/mock JSON. No servers needed.
- *   2. Normal: calls FastAPI with the user's Supabase token.
- *   3. getDeck only: if FastAPI is down or errors, falls back to a simple
- *      Supabase query so swiping keeps working.
+ * The client uses these data sources:
+ *   1. Demo mode: reads the public menu when Supabase is configured, with sample data as a fallback.
+ *   2. Recommendations and Food DNA: call FastAPI with the user's Supabase token.
+ *   3. Live deck: reads available dishes from Supabase.
  */
 import mockDeck from '../../../data/mock/deck.json'
 import mockFoodDna from '../../../data/mock/food_dna.json'
@@ -19,6 +18,7 @@ import type {
   ModelName,
   RecommendationsResponse,
 } from '../types/contracts'
+import { getDeckFromSupabase } from './deckFallback'
 import { supabase, USE_MOCKS } from './supabase'
 
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
@@ -50,8 +50,16 @@ export function getHealth(): Promise<HealthResponse> {
 }
 
 export async function getDeck(limit = 10): Promise<DeckResponse> {
-  if (USE_MOCKS) return mockDeck as DeckResponse
-  return apiGet<DeckResponse>('/deck', { limit })
+  if (!USE_MOCKS) return getDeckFromSupabase(limit)
+  if (supabase) {
+    try {
+      const deck = await getDeckFromSupabase(limit, false)
+      if (deck.items.length) return deck
+    } catch (error) {
+      console.warn('Public menu unavailable. Using the sample deck.', error)
+    }
+  }
+  return { ...mockDeck, items: mockDeck.items.slice(0, limit) } as DeckResponse
 }
 
 export interface RecommendationQuery {
@@ -64,10 +72,14 @@ export interface RecommendationQuery {
 
 export async function getRecommendations(q: RecommendationQuery = {}): Promise<RecommendationsResponse> {
   if (USE_MOCKS) return mockRecommendations as RecommendationsResponse
-  return apiGet<RecommendationsResponse>('/recommendations', { ...q })
+  const result = await apiGet<RecommendationsResponse>('/recommendations', { ...q })
+  if (result.is_mock) throw new Error('Set USE_MOCK_DATA=false on the API to see live recommendations.')
+  return result
 }
 
 export async function getFoodDna(): Promise<FoodDnaResponse> {
   if (USE_MOCKS) return mockFoodDna as FoodDnaResponse
-  return apiGet<FoodDnaResponse>('/food-dna')
+  const result = await apiGet<FoodDnaResponse>('/food-dna')
+  if (result.is_mock) throw new Error('Set USE_MOCK_DATA=false on the API to see your Food DNA.')
+  return result
 }
