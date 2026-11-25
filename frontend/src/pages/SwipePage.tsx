@@ -1,50 +1,67 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import DishDetails from '../components/DishDetails'
 import { Link } from 'react-router-dom'
-import { DemoNotice, FoodImage, PageHeader, PaperPanel, PrimaryButton, SecondaryButton, Tag } from '../components/ui'
+import { FoodImage, PageHeader, PrimaryButton, SecondaryButton, Tag } from '../components/ui'
 import { useAppState } from '../lib/useAppState'
 import { getDeck } from '../lib/api'
-import type { Food } from '../types/contracts'
+import { supabase } from '../lib/supabase'
+import type { DeckFood } from '../types/contracts'
 import { matchesPreferences } from '../lib/preferences'
 
 export default function SwipePage() {
   const { recordSwipe, likedIds, preferences, avoidances, swipedIds, restartDeck, isDemo } = useAppState()
-  const [deck, setDeck] = useState<Food[]>([])
+  const [deck, setDeck] = useState<DeckFood[]>([])
+  const [sampleDeck, setSampleDeck] = useState(false)
+  const [strategy, setStrategy] = useState<string>()
+  const [saveError, setSaveError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [dragX, setDragX] = useState(0)
-  const [pointerStart, setPointerStart] = useState<number | null>(null)
+  const pointer = useRef<{ id: number, startX: number } | null>(null)
   const [busy, setBusy] = useState(false)
   const lock = useRef(false)
-  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
-  useEffect(() => () => clearTimeout(timer.current), [])
 
   const loadDeck = useCallback(() => {
     setLoading(true)
     setError(null)
-    getDeck(20).then((result) => { setDeck(result.items) }).catch((reason: unknown) => setError(String(reason))).finally(() => setLoading(false))
+    getDeck(20).then((result) => { setDeck(result.items); setStrategy(result.strategy); setSampleDeck(result.is_mock) }).catch((reason: unknown) => setError(String(reason))).finally(() => setLoading(false))
   }, [])
 
   useEffect(() => { loadDeck() }, [loadDeck])
 
   const current = deck.find((food) => !swipedIds.has(food.id) && matchesPreferences(food, preferences, avoidances))
-  function submit(liked: boolean) {
+  async function submit(liked: boolean) {
     if (!current || lock.current) return
-    if (!isDemo) { setError('Live swipe saving is not connected yet. Use demo mode to explore saving dishes.'); return }
     lock.current = true
     setBusy(true)
-    setDragX(liked ? 130 : -130)
-    timer.current = setTimeout(() => {
-      recordSwipe(current.id, liked)
-      setDragX(0)
-      setBusy(false)
-      lock.current = false
-    }, 180)
+    setSaveError(null)
+    if (!isDemo && supabase) {
+      try {
+        const { error } = await supabase.from('swipe_events').insert({
+          food_id: current.id,
+          liked,
+          source: 'deck',
+          deck_strategy: strategy,
+        })
+        if (error) throw error
+      } catch {
+        setSaveError('Could not save this swipe. Sign in again if your session expired, then retry.')
+        setDragX(0)
+        setBusy(false)
+        lock.current = false
+        return
+      }
+    }
+    recordSwipe(current.id, liked, isDemo ? current : undefined)
+    setDragX(0)
+    setBusy(false)
+    lock.current = false
   }
 
   useEffect(() => {
     function onKey(event: KeyboardEvent) {
-      if (event.repeat || (event.target instanceof HTMLElement && event.target.closest('input, textarea, select, button, a'))) return
+      if (!current || loading || error || event.repeat || event.altKey || event.ctrlKey || event.metaKey) return
+      if (event.target instanceof HTMLElement && event.target.closest('input, textarea, select, [contenteditable]')) return
       if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') event.preventDefault()
       if (event.key === 'ArrowLeft') submit(false)
       if (event.key === 'ArrowRight') submit(true)
@@ -55,21 +72,49 @@ export default function SwipePage() {
 
   if (loading) return <section className="page-wrap centered-state"><p className="loading-mark">Finding your next bite…</p></section>
   if (error) return <section className="page-wrap centered-state"><p className="form-error">We couldn’t load the deck.</p><p className="muted-copy">{error}</p><PrimaryButton onClick={loadDeck}>Try again</PrimaryButton></section>
-  if (!current) return <section className="page-wrap centered-state"><PageHeader eyebrow="Deck complete" title="You’re all caught up." description="No unseen dishes match your preferences. Revisit saved picks or adjust your filters." /><Link className="primary-button button-link" to="/liked">See saved foods</Link><SecondaryButton onClick={restartDeck}>Start over</SecondaryButton><Link to="/settings">Adjust preferences</Link></section>
+  if (!current) return <section className="page-wrap centered-state"><PageHeader eyebrow="Deck complete" title="You’re all caught up." description={isDemo ? "No unseen dishes match your preferences. Revisit saved picks or adjust your filters." : "No unreviewed dishes are available on the upcoming menus."} />{isDemo && <Link className="primary-button button-link" to="/liked">See saved foods</Link>}<SecondaryButton onClick={isDemo ? restartDeck : loadDeck}>{isDemo ? 'Start over' : 'Load more dishes'}</SecondaryButton>{isDemo && <Link to="/settings">Adjust preferences</Link>}</section>
 
   const tags = [...(current.dietary_tags ?? []), current.cuisine].filter(Boolean).slice(0, 3)
   return (
     <section className="page-wrap deck-page">
-      <div className="deck-topline"><span className="deck-history">{likedIds.size} saved</span><Link to="/profile" className="deck-profile">{preferences.length ? 'Your deck' : 'Food explorer'} ↗</Link></div>
+      <div className="deck-topline"><span className="deck-history">{likedIds.size} saved</span>{isDemo && <Link to="/profile" className="deck-profile">{preferences.length ? 'Your deck' : 'Food explorer'} ↗</Link>}</div>
       <PageHeader eyebrow="Today’s deck" title="Swipe Deck" description="Teach us what you’re craving." />
-      <PaperPanel className="swipe-card-wrap">
-        <div className="swipe-card" style={{ transform: `translateX(${dragX}px) rotate(${dragX / 18}deg)` }} onPointerCancel={() => { setDragX(0); setPointerStart(null) }} onPointerDown={(event) => { if (busy) return; setPointerStart(event.clientX); event.currentTarget.setPointerCapture(event.pointerId) }} onPointerMove={(event) => { if (pointerStart !== null) setDragX(event.clientX - pointerStart) }} onPointerUp={() => { if (Math.abs(dragX) > 90) submit(dragX > 0); else setDragX(0); setPointerStart(null) }}>
+      <section
+        className="paper-panel swipe-card-wrap"
+        onPointerDown={event => {
+          if (!event.isPrimary || event.button !== 0 || lock.current) return
+          pointer.current = { id: event.pointerId, startX: event.clientX }
+          event.currentTarget.setPointerCapture(event.pointerId)
+        }}
+        onPointerMove={event => {
+          if (pointer.current?.id === event.pointerId) setDragX(event.clientX - pointer.current.startX)
+        }}
+        onLostPointerCapture={event => {
+          if (pointer.current?.id !== event.pointerId) return
+          pointer.current = null
+          setDragX(0)
+        }}
+        onPointerUp={event => {
+          if (pointer.current?.id !== event.pointerId) return
+          const distance = event.clientX - pointer.current.startX
+          pointer.current = null
+          const threshold = Math.min(90, Math.max(44, event.currentTarget.clientWidth * 0.18))
+          if (Math.abs(distance) >= threshold) void submit(distance > 0)
+          else setDragX(0)
+        }}
+      >
+        <div className="swipe-card" style={{ transform: `translateX(${dragX}px) rotate(${dragX / 18}deg)` }}>
           <div className="swipe-feedback like-feedback" style={{ opacity: Math.min(1, Math.max(0, dragX / 90)) }}>LIKE</div><div className="swipe-feedback pass-feedback" style={{ opacity: Math.min(1, Math.max(0, -dragX / 90)) }}>PASS</div>
-          <span className="handwritten-title">{current.name.replace(/^Mock /, '').split(' ').slice(0, 3).join(' ')}</span>
+          <span className="handwritten-title">{current.name.replace(/^Mock /, '')}</span>
+          <p className="dish-halls">
+            {current.dining_hall_names?.length
+              ? `${sampleDeck ? 'Sample · ' : ''}${current.dining_hall_names.join(' · ')}`
+              : sampleDeck ? 'Sample dish' : 'Dining hall unavailable'}
+          </p>
           <FoodImage key={current.id} food={current} />
-          <div className="swipe-card-details">{tags.map((tag) => <Tag key={tag} tone="coral">{tag}</Tag>)}<p>{current.allergens?.length ? `Contains: ${current.allergens.join(', ')}` : 'No listed allergens in this sample'}</p></div>
+          <div className="swipe-card-details">{tags.map((tag) => <Tag key={tag} tone="coral">{tag}</Tag>)}<p>{current.allergens?.length ? `Contains: ${current.allergens.join(', ').replace(/_/g, ' ')}` : current.allergens === null ? 'Allergen information unavailable' : 'No allergens listed'}</p></div>
         </div>
-      </PaperPanel>
+      </section>
       <div className="swipe-actions">
         <button disabled={busy} className="round-action pass" onClick={() => submit(false)} aria-label="Pass on this dish">
           <span className="mobile-pass-icon" aria-hidden="true">×</span>
@@ -80,8 +125,14 @@ export default function SwipePage() {
         </button>
         <button disabled={busy} className="round-action like" onClick={() => submit(true)} aria-label="Like this dish">♡</button>
       </div>
-      <p className="keyboard-hint">Drag the card, tap a button, or use ← → on your keyboard.</p>
-      <DishDetails food={current} /><DemoNotice />
+      <p className="keyboard-hint">Swipe the card or use the buttons.<span className="physical-keyboard-hint"> Keyboard: ← to pass, → to like.</span></p>
+      {saveError && <p role="alert" className="form-error">{saveError}</p>}
+      <DishDetails food={current} />
+      {isDemo && <p className="demo-notice" role="status">
+        {sampleDeck
+          ? 'Sample deck · No current UCLA menu could be loaded.'
+          : 'UCLA dining menu · Demo swipes are saved on this device.'}
+      </p>}
     </section>
   )
 }

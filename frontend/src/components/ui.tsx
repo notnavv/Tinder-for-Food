@@ -66,5 +66,5 @@ export function FoodImage({ food, size = 'large' }: { food: Food; size?: 'small'
 }
 
 export function DemoNotice() {
-  return USE_MOCKS ? <p className="demo-notice" role="status">Demo mode · sample dishes and illustrative photos. Recommendations and Food DNA are static examples, not calculated from your swipes.</p> : null
+  return USE_MOCKS ? <p className="demo-notice" role="status">Demo mode · your activity is stored on this device.</p> : null
 }

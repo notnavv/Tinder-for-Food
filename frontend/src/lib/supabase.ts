@@ -19,3 +19,10 @@ export function enterDemo() {
   sessionStorage.setItem('tff-demo', 'true')
   window.location.assign('/onboarding')
 }
+
+export function leaveDemo() {
+  sessionStorage.removeItem('tff-demo')
+  window.location.assign('/login')
+}
+
+export const canLeaveDemo = demoOverride() && import.meta.env.VITE_USE_MOCKS !== 'true' && Boolean(supabase)
