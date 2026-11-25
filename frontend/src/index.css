@@ -134,7 +134,8 @@ button:disabled { cursor: wait; opacity: .6; }
 .deck-page .page-header { text-align: center; margin-top: 26px; margin-bottom: 24px; }
 .deck-page .page-header p { margin-left: auto; margin-right: auto; }
 .swipe-card-wrap { padding: 14px; touch-action: pan-y; }
-.swipe-card { position: relative; min-height: 330px; padding: 14px 12px; overflow: hidden; border: 1px solid rgba(255,255,255,.9); border-radius: 22px; background: rgba(255,255,255,.36); transition: transform .18s ease; user-select: none; }
+.deck-page { overflow-x: clip; }
+.swipe-card { position: relative; min-height: 330px; padding: 14px 12px; overflow: hidden; border: 1px solid rgba(255,255,255,.9); border-radius: 22px; background: rgba(255,255,255,.36); user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; will-change: transform; }
 .handwritten-title { display: block; color: #69452e; font-family: "Bradley Hand", "Segoe Print", cursive; font-size: clamp(2.3rem, 10vw, 3.3rem); text-align: center; transform: rotate(-3deg); }
 .swipe-card .food-image { width: min(52vw, 210px); height: min(52vw, 210px); margin: 12px auto 16px; }
 .swipe-card .handwritten-title { font-size: clamp(1.35rem, 5vw, 1.9rem); line-height: 1.2; overflow-wrap: anywhere; }
@@ -145,7 +146,9 @@ button:disabled { cursor: wait; opacity: .6; }
 .swipe-feedback { position: absolute; z-index: 1; top: 26px; padding: 5px 8px; border: 2px solid currentColor; border-radius: 5px; opacity: 0; font-size: .8rem; font-weight: 900; transform: rotate(-10deg); }
 .like-feedback { left: 20px; color: #dc613c; }.pass-feedback { right: 20px; color: #8c6e5c; transform: rotate(10deg); }
 .swipe-actions { display: flex; justify-content: center; gap: 22px; margin: 22px 0 10px; }
-.round-action { width: 64px; height: 64px; border-radius: 50%; background: rgba(255,255,255,.62); font-size: 2rem; box-shadow: 0 3px 0 rgba(116, 78, 52, .13); }
+.round-action { width: 64px; height: 64px; padding: 0; display: grid; place-items: center; border-radius: 50%; background: rgba(255,255,255,.62); font-size: 2rem; line-height: 1; box-shadow: 0 3px 0 rgba(116, 78, 52, .13); touch-action: manipulation; }
+.round-action svg { width: 46%; height: 46%; }
+.mobile-pass-icon, .round-action.like svg { display: block; }
 .round-action.pass { color: #8d786a; border: 1px solid #bba694; }.round-action.like { color: #f15f38; border: 1px solid #f15f38; }
 .keyboard-hint { color: #9b8575; text-align: center; font-size: .7rem; }
 
