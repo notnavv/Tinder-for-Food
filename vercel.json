@@ -1,0 +1,10 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "fastapi",
+  "functions": {
+    "api/index.py": {
+      "includeFiles": "{backend/app/**,data/dish-eligibility.json,data/mock/**}",
+      "excludeFiles": "{frontend/**,backend/tests/**,backend/.venv/**,data/raw/**}"
+    }
+  }
+}
